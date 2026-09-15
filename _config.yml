@@ -12,7 +12,7 @@ title: atomic-ledger
 description: >-
   A small banking-ledger service built to close three interview-exposed gaps: java.util.concurrent
   recall, ReentrantLock used correctly, and PostgreSQL transaction-isolation behaviour.
-url: https://AlexOreshkevich.github.io
+url: https://nirmata78.github.io
 baseurl: /atomic-ledger
 
 remote_theme: just-the-docs/just-the-docs@v0.10.1
@@ -48,7 +48,7 @@ color_scheme: dark
 
 aux_links:
   "View on GitHub":
-    - "https://github.com/AlexOreshkevich/atomic-ledger"
+    - "https://github.com/nirmata78/atomic-ledger"
 aux_links_new_tab: true
 
 back_to_top: true
