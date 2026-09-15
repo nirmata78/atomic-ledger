@@ -1,0 +1,14 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: atomic_ledger
+      POSTGRES_USER: atomic
+      POSTGRES_PASSWORD: atomic
+    ports:
+      - "5432:5432"
+    volumes:
+      - atomic-ledger-pgdata:/var/lib/postgresql/data
+
+volumes:
+  atomic-ledger-pgdata:

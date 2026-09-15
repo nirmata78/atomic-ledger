@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: balance-read-model
+  datasource:
+    url: jdbc:postgresql://localhost:5432/atomic_ledger
+    username: atomic
+    password: atomic
+
+server:
+  port: 8081

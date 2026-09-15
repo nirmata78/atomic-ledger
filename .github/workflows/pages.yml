@@ -1,0 +1,76 @@
+name: pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '**.md'
+      - '_config.yml'
+      - 'scripts/prepare-site.sh'
+      - '.github/workflows/pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: build site
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+
+      - name: Configure Pages
+        id: pages
+        uses: actions/configure-pages@v6
+
+      - name: Stage pages for Jekyll
+        run: ./scripts/prepare-site.sh
+
+      - name: Build site
+        run: bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}"
+        env:
+          JEKYLL_ENV: production
+
+      - name: Verify the key pages were generated
+        run: |
+          set -e
+          missing=0
+          for f in _site/index.html \
+                   _site/docs/README.html \
+                   _site/docs/00-overview.html \
+                   _site/docs/04-architecture.html \
+                   _site/tasks/README.html; do
+            [ -f "$f" ] || { echo "::error::missing generated page $f"; missing=1; }
+          done
+          n=$(find _site/tasks -name 'T-*.html' | wc -l)
+          echo "task pages generated: $n"
+          [ "$n" -eq 10 ] || { echo "::error::expected 10 task pages, got $n"; missing=1; }
+          exit $missing
+
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: _site
+
+  deploy:
+    name: deploy site
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5
